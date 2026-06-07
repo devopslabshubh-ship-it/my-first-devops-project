@@ -1,0 +1,103 @@
+===================================================================
+     DEVOPLABS MASTER MANUAL: LOCAL INFRASTRUCTURE & VIRTUALIZATION
+===================================================================
+
+1. ARCHITECTURAL DIFFERENTIATION (Host Services vs Isolation Containers)
+------------------------------------------------------------------------
+* Bare-Metal / Host Deployment: Installs packages directly onto the operating 
+  system kernel (`apt install`). Shared libraries and direct bindings mean system 
+  reconfigurations can directly trigger dependency errors or platform lockouts.
+* Containerization Engine (Docker): Isolates standalone services inside independent 
+  sandboxed execution processes sharing the OS layer via namespaces and cgroups, 
+  guaranteeing zero cross-library contamination.
+
+2. NGINX MULTI-PORT GATEWAY TERMINATION LOGS
+--------------------------------------------
+File Path Modified: /etc/nginx/sites-available/default
+Configuration Ruleset:
+  server {
+      listen 8080 default_server;
+      location / {
+          proxy_pass http://127.0.0.1:5000;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+      }
+  }
+
+Verification Syntax Output:
+$ sudo nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+$ sudo systemctl restart nginx
+
+* 502 Bad Gateway State: Hit http://127.0.0.1:8080 without backend processes.
+* Netcat Backend Loop Daemon Trigger:
+  $ while true; do echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n🚀 Backend App Core System Se Live Hai, Bhai!" | nc -l -p 5000; done
+
+3. DOCKER VIRTUALIZATION INFRASTRUCTURE INSTALLATION LOGS
+--------------------------------------------------------
+# Step 1: Map architecture packages securely under POSIX rules
+$ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Step 2: Synchronize local apt listings and deploy core packages
+$ sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io
+
+# Step 3: Verify operational status criteria
+$ sudo systemctl start docker && sudo systemctl status docker
+  Active: active (running) since Sat 2026-06-06 11:21:59 UTC
+
+4. RUNNING OFFICIAL CONTAINERS & PORT REDIRECTS MAPPING
+-------------------------------------------------------
+# Spawning official web container using public image registries:
+$ sudo docker run -d -p 9090:80 --name shubh-nginx-container nginx
+
+Verification Active Mapping State:
+$ sudo docker ps
+CONTAINER ID   IMAGE   STATUS         PORTS                                   NAMES
+842a3bebbdd9   nginx   Up 3 minutes   0.0.0.0:9090->80/tcp, [::]:9090->80/tcp shubh-nginx-container
+
+Network Loopback Mapping Context:
+[Windows Browser Link] ---> Strike URL http://localhost:9090
+                                       │
+                                       ▼
+[vNIC Virtual Bridge] ----> Maps Host Port 9090 directly to Sandbox Jail Port 80
+                                       │
+                                       ▼
+[Isolated Nginx Web Container] ----> Renders standalone pristine "Welcome to nginx!" page.
+
+===================================================================
+STATUS: Cross-Layer Proxy Configuration & Core Docker Run COMPLETE.
+===================================================================
+
+5. RUNNING ENTERPRISE DATABASE CONTAINERS (MySQL Layer)
+-------------------------------------------------------
+# Spawning isolated database service utilizing explicit environment variables:
+$ sudo docker run -d -p 3306:3306 --name shubh-mysql-container -e MYSQL_ROOT_PASSWORD=mysecurepassword mysql:8.0
+
+Attributes Analysis:
+  -p 3306:3306   --> Binds local laptop host network port directly into MySQL socket layer.
+  -e             --> Environment Variable injection mechanism defining core credentials.
+
+Full Topology Status:
+$ sudo docker ps
+Parallel active runtime stacks verified (Nginx Web Gateway + MySQL Core Database Node).
+===================================================================
+
+5. RUNNING ENTERPRISE DATABASE CONTAINERS (MySQL Layer)
+-------------------------------------------------------
+# Spawning isolated database service utilizing explicit environment variables:
+$ sudo docker run -d -p 3306:3306 --name shubh-mysql-container -e MYSQL_ROOT_PASSWORD=mysecurepassword mysql:8.0
+
+Attributes Analysis:
+  -p 3306:3306   --> Binds local laptop host network port directly into MySQL socket layer.
+  -e             --> Environment Variable injection mechanism defining core credentials.
+
+Full Topology Status (Web Engine + Database Matrix Synchronized):
+$ sudo docker ps
+CONTAINER ID   IMAGE       STATUS          PORTS                                     NAMES
+855a4e6ca9f5   mysql:8.0   Up About a min  0.0.0.0:3306->3306/tcp                    shubh-mysql-container
+842a3bebbdd9   nginx       Up 21 minutes   0.0.0.0:9090->80/tcp                      shubh-nginx-container
+
+===================================================================
+STATUS: Cross-Layer Proxy Configuration & Multi-Container Complete.
+===================================================================

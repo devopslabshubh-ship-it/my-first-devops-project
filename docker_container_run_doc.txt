@@ -1,0 +1,40 @@
+===================================================================
+     DOCKER LIVE CONTAINER RUNTIME & PORT MAPPING MANIFEST
+===================================================================
+
+1. CONTAINER RUNTIME LOGIC
+--------------------------
+Deploying an application via Docker eliminates host-level package pollution. 
+The container spawns inside an isolated infrastructure sandbox process, 
+possessing its own network interface stacks separate from the core OS.
+
+2. RUNTIME DEPLOYMENT LOGS
+---------------------------
+# Command executed to pool image from Docker Hub and bind processes:
+$ sudo docker run -d -p 9090:80 --name shubh-nginx-container nginx
+
+# Operational Attributes Decoupled:
+  -d             --> Detached Core Daemon Mode (Runs silently in background)
+  -p 9090:80     --> Port Redirect Bindings (HostPort:9090 maps to ContainerPort:80)
+  --name         --> Unique identification tag injected into core engine mappings
+  nginx          --> Official image repository artifact pulled from public registry
+
+3. INFRASTRUCTURE STATE VERIFICATION
+------------------------------------
+$ sudo docker ps
+CONTAINER ID   IMAGE   STATUS          PORTS                                   NAMES
+842a3bebbdd9   nginx   Up 3 minutes    0.0.0.0:9090->80/tcp, [::]:9090->80/tcp shubh-nginx-container
+
+4. PACKET STREAM TRACKING
+--------------------------
+[Windows Chrome Browser Layer] ---> Strike URL http://localhost:9090
+                                               │
+                                               ▼
+[Docker Network vNIC Bridge] ------> Maps Port 9090 payload directly to Container Port 80
+                                               │
+                                               ▼
+[Isolated Nginx Web Container] ----> Processes data stream, returns official active page.
+
+===================================================================
+STATUS: First Nginx Image Container Lifecycle Deployment SUCCESSFUL.
+===================================================================
