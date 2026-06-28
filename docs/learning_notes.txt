@@ -72,7 +72,7 @@ STATUS: Cross-Layer Proxy Configuration & Core Docker Run COMPLETE.
 5. RUNNING ENTERPRISE DATABASE CONTAINERS (MySQL Layer)
 -------------------------------------------------------
 # Spawning isolated database service utilizing explicit environment variables:
-$ sudo docker run -d -p 3306:3306 --name shubh-mysql-container -e MYSQL_ROOT_PASSWORD=mysecurepassword mysql:8.0
+$ sudo docker run -d -p 3306:3306 --name shubh-mysql-container
 
 Attributes Analysis:
   -p 3306:3306   --> Binds local laptop host network port directly into MySQL socket layer.
@@ -86,7 +86,7 @@ Parallel active runtime stacks verified (Nginx Web Gateway + MySQL Core Database
 5. RUNNING ENTERPRISE DATABASE CONTAINERS (MySQL Layer)
 -------------------------------------------------------
 # Spawning isolated database service utilizing explicit environment variables:
-$ sudo docker run -d -p 3306:3306 --name shubh-mysql-container -e MYSQL_ROOT_PASSWORD=mysecurepassword mysql:8.0
+
 
 Attributes Analysis:
   -p 3306:3306   --> Binds local laptop host network port directly into MySQL socket layer.
